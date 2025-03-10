@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 namespace TicTacToe_gruppe4
 {
     internal class GameView
-    { 
+    {
+
         public void PrintBoard(GameBoardModel board, int size)
         {
             Console.Clear();
@@ -24,4 +25,3 @@ namespace TicTacToe_gruppe4
         }
     }
 }
-

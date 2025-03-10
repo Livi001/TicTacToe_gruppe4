@@ -2,10 +2,10 @@
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            GameController game = new GameController(GameController.BoardSize.Riesig);
-
+            GameController game = new GameController(); 
+            Console.ReadLine(); 
         }
     }
 }
