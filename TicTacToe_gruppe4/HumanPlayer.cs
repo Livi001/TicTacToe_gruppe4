@@ -17,11 +17,19 @@ namespace TicTacToe_gruppe4
 
             while (!validMove)
             {
-                Console.Write($"{name} ({symbol}), geben Sie Ihre Zeile (0-{gameBoard.GetSize() - 1}) ein: ");
-                row = Convert.ToInt32(Console.ReadLine());
+                while (true)
+                {
+                    Console.Write($"{name} ({symbol}), geben Sie Ihre Zeile (0-{gameBoard.GetSize() - 1}) ein: ");
+                    if (int.TryParse(Console.ReadLine(), out row)) break;
+                    Console.WriteLine("Ungültige Eingabe! Bitte geben Sie eine Zahl ein.");
+                }
 
-                Console.Write($"{name} ({symbol}), geben Sie Ihre Spalte (0-{gameBoard.GetSize() - 1}) ein: ");
-                col = Convert.ToInt32(Console.ReadLine());
+                while (true)
+                {
+                    Console.Write($"{name} ({symbol}), geben Sie Ihre Spalte (0-{gameBoard.GetSize() - 1}) ein: ");
+                    if (int.TryParse(Console.ReadLine(), out col)) break;
+                    Console.WriteLine("Ungültige Eingabe! Bitte geben Sie eine Zahl ein.");
+                }
 
                 if (row >= 0 && row < gameBoard.GetSize() && col >= 0 && col < gameBoard.GetSize() && gameBoard.GetCell(row, col) == ' ')
                 {
