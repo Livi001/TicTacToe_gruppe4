@@ -10,7 +10,11 @@ namespace TicTacToe_gruppe4
     {
         private GameBoardModel gameBoard;
         private GameView gameView;
-        private int boardSize;
+        private Player currentPlayer;
+        private List<Player> players;
+        private GameLogger gameLogger;
+        private Timer gameTimer;
+        private GameState gameState;
 
         public enum BoardSize
         {
@@ -21,9 +25,15 @@ namespace TicTacToe_gruppe4
 
         public GameController()
         {
-            boardSize = ChooseBoardSize();
+            int boardSize = ChooseBoardSize();
             gameBoard = new GameBoardModel(boardSize);
             gameView = new GameView();
+            gameLogger = new GameLogger();
+            gameTimer = new Timer();
+            gameState = new GameState();
+
+            players = ChoosePlayers();
+            currentPlayer = players[0];
 
             StartGame();
         }
@@ -42,19 +52,76 @@ namespace TicTacToe_gruppe4
                 sizeChoice = Convert.ToInt32(Console.ReadLine());
             }
 
-            switch (sizeChoice)
+            return sizeChoice switch
             {
-                case 1: return (int)BoardSize.Classic;
-                case 2: return (int)BoardSize.Gross;
-                case 3: return (int)BoardSize.Riesig;
-                default: return (int)BoardSize.Classic;
-            }
+                1 => (int)BoardSize.Classic,
+                2 => (int)BoardSize.Gross,
+                3 => (int)BoardSize.Riesig,
+                _ => (int)BoardSize.Classic
+            };
+        }
+
+        private List<Player> ChoosePlayers()
+        {
+            Console.WriteLine("Spieler 1 Name: ");
+            string player1Name = Console.ReadLine();
+            Console.WriteLine("Spieler 2 Name oder 'KI' für Computer: ");
+            string player2Name = Console.ReadLine();
+
+            List<Player> players = new List<Player>
+            {
+                new HumanPlayer(player1Name, 'X'),
+                player2Name.ToLower() == "ki" ? new ComputerPlayer("Computer", 'O') : new HumanPlayer(player2Name, 'O')
+            };
+
+            return players;
         }
 
         public void StartGame()
         {
-            Console.WriteLine($"Ein {boardSize}x{boardSize} Tic-Tac-Toe-Spiel wurde gestartet!");
-            gameView.PrintBoard(gameBoard, boardSize);
+            gameTimer.Start();
+            while (true)
+            {
+                gameView.PrintBoard(gameBoard, gameBoard.GetSize());
+
+                currentPlayer.MakeMove(gameBoard);
+                gameLogger.LogMove(new Move(0, 0)); // Dummy-Wert für Logging
+
+                gameState.SaveMemento(new Memento(gameBoard.GetBoardCopy()));
+
+                if (gameBoard.CheckWin(currentPlayer.GetSymbol()))
+                {
+                    gameView.PrintBoard(gameBoard, gameBoard.GetSize());
+                    Console.WriteLine($"{currentPlayer.GetName()} gewinnt!");
+                    gameTimer.Stop();
+                    break;
+                }
+
+                if (gameBoard.IsFull())
+                {
+                    gameView.PrintBoard(gameBoard, gameBoard.GetSize());
+                    Console.WriteLine("Unentschieden!");
+                    gameTimer.Stop();
+                    break;
+                }
+
+                SwitchPlayer();
+            }
+        }
+
+        private void SwitchPlayer() => currentPlayer = (currentPlayer == players[0]) ? players[1] : players[0];
+
+        public void UndoMove()
+        {
+            Memento lastState = gameState.GetLastMemento();
+            if (lastState != null)
+            {
+                Console.WriteLine("Letzter Zug wurde rückgängig gemacht!");
+            }
+            else
+            {
+                Console.WriteLine("Kein Zug zum Rückgängig machen!");
+            }
         }
     }
 }

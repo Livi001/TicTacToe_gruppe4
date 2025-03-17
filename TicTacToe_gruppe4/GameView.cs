@@ -8,7 +8,6 @@ namespace TicTacToe_gruppe4
 {
     internal class GameView
     {
-
         public void PrintBoard(GameBoardModel board, int size)
         {
             Console.Clear();
@@ -23,5 +22,7 @@ namespace TicTacToe_gruppe4
                 if (i < size - 1) Console.WriteLine(new string('-', size * 4 - 1));
             }
         }
+
+        public void PrintMessage(string message) => Console.WriteLine(message);
     }
 }
