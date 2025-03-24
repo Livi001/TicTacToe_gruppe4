@@ -2,8 +2,8 @@
 {
     public abstract class Player
     {
-        protected string name;
-        protected char symbol;
+        public string name;
+        public char symbol;
 
 
         public Player(string name, char symbol)

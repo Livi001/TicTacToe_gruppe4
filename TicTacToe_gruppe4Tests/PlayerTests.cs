@@ -1,38 +1,26 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TicTacToe_gruppe4;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using tictactoe_gruppe4;
 
-namespace TicTacToe_gruppe4.Tests
+
+namespace TicTacToeTests
 {
-    [TestClass()]
-    public class PlayerTests
+    [TestClass]
+    public class HumanPlayerTests
     {
-        [TestMethod()]
-        public void PlayerTest()
+        [TestMethod]
+        public void MakeMove_ShouldReturnValidMove()
         {
-            Assert.Fail();
-        }
+            // Arrange
+            var gameBoard = new GameBoardModel(3);
+            var player = new HumanPlayer("Player1", 'X');
 
-        [TestMethod()]
-        public void GetNameTest()
-        {
-         
-        }
+            // Act
+            // Simulating a valid input
+            var move = player.MakeMove(gameBoard);
 
-        [TestMethod()]
-        public void GetSymbolTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void MakeMoveTest()
-        {
-            Assert.Fail();
+            // Assert
+            Assert.AreEqual("Player1 setzt", move.Item1);
+            Assert.IsTrue(gameBoard.GetCell(move.Item2.Item1, move.Item2.Item2) == 'X');
         }
     }
 }
