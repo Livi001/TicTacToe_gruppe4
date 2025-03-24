@@ -1,46 +1,45 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TicTacToe_gruppe4;
 
-namespace TicTacToe_gruppe4
+namespace tictactoe_test
 {
     public class HumanPlayer : Player
     {
         public HumanPlayer(string name, char symbol) : base(name, symbol) { }
 
-        public override void MakeMove(GameBoardModel gameBoard)
+        public override (int, int) MakeMove(GameBoardModel gameBoard)
         {
             int row, col;
             bool validMove = false;
 
             while (!validMove)
             {
-                while (true)
+                Console.Write($"{GetName()} ({GetSymbol()}), geben Sie Ihre Zeile (0-{gameBoard.GetSize() - 1}) ein: ");
+                if (!int.TryParse(Console.ReadLine(), out row))
                 {
-                    Console.Write($"{name} ({symbol}), geben Sie Ihre Zeile (0-{gameBoard.GetSize() - 1}) ein: ");
-                    if (int.TryParse(Console.ReadLine(), out row)) break;
-                    Console.WriteLine("Ungültige Eingabe! Bitte geben Sie eine Zahl ein.");
+                    Console.WriteLine("❌ Ungültige Eingabe! Bitte eine Zahl eingeben.");
+                    continue;
                 }
 
-                while (true)
+                Console.Write($"{GetName()} ({GetSymbol()}), geben Sie Ihre Spalte (0-{gameBoard.GetSize() - 1}) ein: ");
+                if (!int.TryParse(Console.ReadLine(), out col))
                 {
-                    Console.Write($"{name} ({symbol}), geben Sie Ihre Spalte (0-{gameBoard.GetSize() - 1}) ein: ");
-                    if (int.TryParse(Console.ReadLine(), out col)) break;
-                    Console.WriteLine("Ungültige Eingabe! Bitte geben Sie eine Zahl ein.");
+                    Console.WriteLine("❌ Ungültige Eingabe! Bitte eine Zahl eingeben.");
+                    continue;
                 }
 
                 if (row >= 0 && row < gameBoard.GetSize() && col >= 0 && col < gameBoard.GetSize() && gameBoard.GetCell(row, col) == ' ')
                 {
-                    gameBoard.SetCell(row, col, symbol);
+                    gameBoard.SetCell(row, col, GetSymbol());
                     validMove = true;
                 }
                 else
                 {
-                    Console.WriteLine("Ungültiger Zug! Bitte erneut eingeben.");
+                    Console.WriteLine("❌ Ungültiger Zug! Bitte erneut eingeben.");
                 }
             }
+
+            return (row, col); // ✅ Richtige Rückgabe!
         }
     }
 }

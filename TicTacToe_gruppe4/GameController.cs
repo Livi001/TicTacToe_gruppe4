@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TicTacToe_gruppe4;
 
-namespace TicTacToe_gruppe4
+namespace tictactoe_test
 {
     internal class GameController
     {
@@ -16,9 +17,11 @@ namespace TicTacToe_gruppe4
         private Timer gameTimer;
         private GameState gameState;
 
+        private List<string> gameHistory = new List<string>(); // Liste für Spielverlauf
+
         public enum BoardSize
         {
-            Classic = 3,
+            Klassik = 3,
             Gross = 5,
             Riesig = 7
         }
@@ -54,10 +57,10 @@ namespace TicTacToe_gruppe4
 
             return sizeChoice switch
             {
-                1 => (int)BoardSize.Classic,
+                1 => (int)BoardSize.Klassik,
                 2 => (int)BoardSize.Gross,
                 3 => (int)BoardSize.Riesig,
-                _ => (int)BoardSize.Classic
+                _ => (int)BoardSize.Klassik
             };
         }
 
@@ -84,8 +87,10 @@ namespace TicTacToe_gruppe4
             {
                 gameView.PrintBoard(gameBoard, gameBoard.GetSize());
 
-                currentPlayer.MakeMove(gameBoard);
-                gameLogger.LogMove(new Move(0, 0)); // Dummy-Wert für Logging
+                (int row, int col) = currentPlayer.MakeMove(gameBoard);
+                string moveDescription = $"{currentPlayer.GetName()} ({currentPlayer.GetSymbol()}) setzt auf [{row}, {col}]";
+                LogMove(moveDescription);
+
 
                 gameState.SaveMemento(new Memento(gameBoard.GetBoardCopy()));
 
@@ -107,22 +112,62 @@ namespace TicTacToe_gruppe4
 
                 SwitchPlayer();
             }
+
+            // Am Ende des Spiels wird entschieden, ob das Spiel neu startet oder nicht
+            EndGame();
         }
 
         private void SwitchPlayer() => currentPlayer = (currentPlayer == players[0]) ? players[1] : players[0];
 
-        public void UndoMove()
+        private void EndGame()
         {
-            Memento lastState = gameState.GetLastMemento();
-            if (lastState != null)
+            Console.WriteLine("Möchten Sie das Spiel neu starten? (y/n): ");
+            string choice = Console.ReadLine();
+
+            if (choice.ToLower() == "y")
             {
-                Console.WriteLine("Letzter Zug wurde rückgängig gemacht!");
+                RestartGame(); // Spiel neu starten
             }
-            else
+            else if (choice.ToLower() == "n")
             {
-                Console.WriteLine("Kein Zug zum Rückgängig machen!");
+                // Falls der Benutzer nicht neu starten möchte, fragen wir, ob er den Spielverlauf ansehen möchte
+                Console.WriteLine("Möchten Sie den Spielverlauf ansehen? (y/n): ");
+                string viewHistoryChoice = Console.ReadLine();
+
+                if (viewHistoryChoice.ToLower() == "y")
+                {
+                    ShowGameHistory(); // Spielverlauf anzeigen
+                }
+                else
+                {
+                    Console.WriteLine("Das Spiel wird jetzt beendet.");
+                }
+            }
+        }
+
+        public void RestartGame()
+        {
+            Console.WriteLine("Das Spiel wird neu gestartet...");
+            int boardSize = ChooseBoardSize();
+            gameBoard = new GameBoardModel(boardSize);
+            currentPlayer = players[0]; // Setze den ersten Spieler zurück
+            StartGame(); // Starte das Spiel neu
+        }
+
+        // Methode zum Protokollieren eines Zuges
+        private void LogMove(string moveDescription)
+        {
+            gameHistory.Add(moveDescription); // Zug zum Verlauf hinzufügen
+        }
+
+        // Methode zum Anzeigen des Spielverlaufs
+        public void ShowGameHistory()
+        {
+            Console.WriteLine("Spielverlauf:");
+            foreach (var move in gameHistory)
+            {
+                Console.WriteLine(move); // Gibt jeden Zug im Verlauf aus
             }
         }
     }
 }
-

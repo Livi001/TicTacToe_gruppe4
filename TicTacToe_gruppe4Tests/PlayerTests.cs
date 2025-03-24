@@ -9,22 +9,30 @@ using System.Threading.Tasks;
 namespace TicTacToe_gruppe4.Tests
 {
     [TestClass()]
-    public class GameBoardModelTests
+    public class PlayerTests
     {
         [TestMethod()]
-        public void GameBoardModelTest()
+        public void PlayerTest()
+        {
+            Assert.Fail();
+        }
+
+        [TestMethod()]
+        public void GetNameTest()
         {
          
         }
 
         [TestMethod()]
-        public void GetCellTest()
+        public void GetSymbolTest()
         {
-            GameBoardModel board = new GameBoardModel(3);
-            char result = board.GetCell(1, 2);
-            Assert.AreEqual(' ', result);
+            Assert.Fail();
         }
 
-        
+        [TestMethod()]
+        public void MakeMoveTest()
+        {
+            Assert.Fail();
+        }
     }
 }

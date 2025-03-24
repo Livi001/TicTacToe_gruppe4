@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TicTacToe_gruppe4;
 
-namespace TicTacToe_gruppe4
+namespace tictactoe_test
 {
     public abstract class Player
     {
@@ -17,9 +18,22 @@ namespace TicTacToe_gruppe4
             this.symbol = symbol;
         }
 
-        public string GetName() => name;
-        public char GetSymbol() => symbol;
+        // ✅ Methode MakeMove gibt jetzt (int, int) zurück
+        public abstract (int, int) MakeMove(GameBoardModel gameBoard);
 
-        public abstract void MakeMove(GameBoardModel gameBoard);
+        // ✅ Getter-Methoden hinzufügen
+        public string GetName()
+        {
+            return name;
+        }
+
+        public char GetSymbol()
+        {
+            return symbol;
+        }
     }
+
+
+
+
 }

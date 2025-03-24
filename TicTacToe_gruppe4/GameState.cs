@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TicTacToe_gruppe4
+namespace tictactoe_test
 {
     public class GameState
     {
@@ -26,4 +26,5 @@ namespace TicTacToe_gruppe4
             return null;
         }
     }
+
 }
