@@ -1,5 +1,4 @@
 ﻿using System;
-using tictactoe_gruppe4;
 
 namespace tictactoe_gruppe4
 {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using tictactoe_gruppe4;
 
 namespace tictactoe_gruppe4
 {
@@ -13,8 +14,10 @@ namespace tictactoe_gruppe4
         private GameLogger gameLogger;
         private Timer gameTimer;
         private GameState gameState;
-        private List<string> gameHistory = new List<string>(); // Spielverlauf
-        private Stack<Memento> mementoHistory = new Stack<Memento>(); // Für Rückgängig-Machen
+        private List<string> gameHistory = new List<string>(); // Liste für Spielverlauf
+        private Stack<Memento> mementoHistory = new Stack<Memento>(); // Stack für Rückgängig-Machen
+        private string logFileName = "game_log.txt";
+
 
         public enum BoardSize
         {
@@ -25,6 +28,7 @@ namespace tictactoe_gruppe4
 
         public GameController()
         {
+            // Spielfeldgröße wird nur einmal beim Start des Spiels abgefragt
             int boardSize = ChooseBoardSize();
             gameBoard = new GameBoardModel(boardSize);
             gameView = new GameView();
@@ -38,6 +42,7 @@ namespace tictactoe_gruppe4
             StartGame();
         }
 
+
         public static GameController Instance
         {
             get
@@ -50,9 +55,9 @@ namespace tictactoe_gruppe4
 
         private int ChooseBoardSize()
         {
-            Console.WriteLine("Wählen Sie die Spielfeldgrösse:");
+            Console.WriteLine("Wählen Sie die Spielfeldgröße:");
             Console.WriteLine("1. Classic (3x3)");
-            Console.WriteLine("2. Gross (5x5)");
+            Console.WriteLine("2. Groß (5x5)");
             Console.WriteLine("3. Riesig (7x7)");
 
             int sizeChoice = 0;
@@ -90,16 +95,22 @@ namespace tictactoe_gruppe4
         public void StartGame()
         {
             gameTimer.Start();
-
             while (true)
             {
                 gameView.PrintBoard(gameBoard, gameBoard.GetSize());
 
-                // Erwartet wird, dass MakeMove ein Tupel (string, (int, int)) zurückgibt.
-                var moveResult = currentPlayer.MakeMove(gameBoard);
-                LogMove(moveResult.Item1, moveResult.Item2); // Zug protokollieren
+                // Der Spieler macht seinen Zug
+                (string moveDescription, (int, int) movePosition) = currentPlayer.MakeMove(gameBoard);
 
-                // Speichere den aktuellen Zustand für Undo
+                if (moveDescription == "undo") // Überprüfe, ob der Spieler 'undo' eingegeben hat
+                {
+                    UndoMove();  // Ziehe den letzten Zug zurück
+                    continue;    // Lass den aktuellen Spieler denselben Zug erneut ausführen
+                }
+
+                LogMove(moveDescription, movePosition); // Spielzug protokollieren
+
+                // Speichern des aktuellen Zustands für Undo
                 gameState.SaveMemento(new Memento(gameBoard.GetBoardCopy()));
                 mementoHistory.Push(new Memento(gameBoard.GetBoardCopy()));
 
@@ -119,86 +130,167 @@ namespace tictactoe_gruppe4
                     break;
                 }
 
-                SwitchPlayer();
+                SwitchPlayer(); // Wechsel zum nächsten Spieler
             }
 
             EndGame();
         }
 
-        private void SwitchPlayer()
-        {
-            currentPlayer = (currentPlayer == players[0]) ? players[1] : players[0];
-        }
+        private void SwitchPlayer() => currentPlayer = (currentPlayer == players[0]) ? players[1] : players[0];
 
+        // Methode zum Beenden des Spiels
         private void EndGame()
         {
-            Console.WriteLine("Möchten Sie das Spiel neu starten? (y/n): ");
+            Console.WriteLine("Möchten Sie das Spiel neu starten oder beenden?");
+            Console.WriteLine("1. Neustarten");
+            Console.WriteLine("2. Beenden");
+
             string choice = Console.ReadLine();
 
-            if (choice.ToLower() == "y")
+            if (choice == "1")
             {
-                RestartGame();
+                RestartGame(); // Spiel neu starten
             }
-            else if (choice.ToLower() == "n")
+            else if (choice == "2")
             {
                 Console.WriteLine("Möchten Sie den Spielverlauf ansehen? (y/n): ");
                 string viewHistoryChoice = Console.ReadLine();
 
                 if (viewHistoryChoice.ToLower() == "y")
                 {
-                    ShowGameHistory();
+                    ShowGameHistory(); // Spielverlauf anzeigen
                 }
-                else
-                {
-                    Console.WriteLine("Das Spiel wird jetzt beendet.");
-                }
+
+                // Beende das Spiel
+                Console.WriteLine("Das Spiel wird jetzt beendet.");
+                Environment.Exit(0); // Beendet das Programm
+            }
+            else
+            {
+                Console.WriteLine("Ungültige Eingabe. Bitte wählen Sie 1 oder 2.");
+                EndGame(); // Falls Eingabe ungültig ist, erneut nach Wahl fragen
             }
         }
+
 
         public void RestartGame()
         {
             Console.WriteLine("Das Spiel wird neu gestartet...");
+
+            // Frage, ob die gleichen Spieler verwendet werden sollen
+            Console.WriteLine("Möchten Sie die gleichen Spieler wie beim letzten Spiel verwenden? (y/n): ");
+            string useSamePlayers = Console.ReadLine().ToLower();
+
+            if (useSamePlayers == "y")
+            {
+                // Verwende die vorherigen Spieler
+                currentPlayer = players[0];
+            }
+            else
+            {
+                // Wähle neue Spieler aus
+                players = ChoosePlayers();
+                currentPlayer = players[0];  // Der erste Spieler wird immer der aktuelle Spieler
+            }
+
+            // Spielfeldgröße neu wählen
             int boardSize = ChooseBoardSize();
             gameBoard = new GameBoardModel(boardSize);
-            currentPlayer = players[0];
+
+            // Verlauf und Mementos leeren (wichtig!)
+            gameHistory.Clear();
+            mementoHistory.Clear();
+
+            // Spiel starten
             StartGame();
         }
 
-        // Protokolliert den Zug: Erwartet eine Beschreibung (string) und die Position als Tupel (int, int)
+
+
+
+        // Methode zum Protokollieren eines Zuges
         private void LogMove(string moveDescription, (int, int) movePosition)
         {
             string detailedMove = $"{moveDescription} auf [{movePosition.Item1}, {movePosition.Item2}]";
-            gameHistory.Add(detailedMove);
+            gameHistory.Add(detailedMove); // Zug zum Verlauf hinzufügen
+
+            // Zeige den Zug in der Konsole an
             Console.WriteLine(detailedMove);
+
+            // Protokolliere den Zug in einer Datei
+            LogMoveToFile(detailedMove);  // Aufruf der LogToFile-Methode
         }
 
-        public void ShowGameHistory()
+
+
+        // Methode zum Protokollieren der Züge in einer Datei
+        private void LogMoveToFile(string moveDescription)
         {
-            Console.WriteLine("Spielverlauf:");
-            foreach (string move in gameHistory)
+            try
             {
-                Console.WriteLine(move);
+                Console.WriteLine("Versuche, den Zug in die Datei zu schreiben...");  // Debugging-Ausgabe
+                using (StreamWriter writer = new StreamWriter(logFileName, true))  // 'true' bedeutet Anhängen
+                {
+                    writer.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - {moveDescription}");
+                }
+                Console.WriteLine("Zug erfolgreich in Datei geschrieben.");  // Debugging-Ausgabe
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Fehler beim Schreiben des Zugs in die Datei: {ex.Message}");  // Fehlerbehandlung
             }
         }
 
-        // Eine einzige öffentliche Methode zum Rückgängigmachen
+
+        // Methode zum Anzeigen des Spielverlaufs
+        public void ShowGameHistory()
+        {
+            Console.WriteLine("Spielverlauf:");
+            foreach (var move in gameHistory)
+            {
+                Console.WriteLine(move); // Gibt jeden Zug im Verlauf aus
+            }
+
+            // Zeige eine Nachricht, dass das Spielprotokoll in einer Datei gespeichert wurde
+            Console.WriteLine("\nDer Spielverlauf wurde auch in der Datei protokolliert.");
+        }
+
+
+        // Methode für Rückgängig-Machen
         public void UndoMove()
         {
-            // Es müssen mindestens zwei Zustände vorhanden sein:
-            // den Zustand vor dem letzten Zug und den aktuellen Zustand.
-            if (mementoHistory.Count > 1)
+            Console.WriteLine($"[Debug] UndoMove aufgerufen. mementoHistory.Count = {mementoHistory.Count}");
+
+            if (mementoHistory.Count > 1)  // Sicherstellen, dass es mehr als einen Zug gibt
             {
                 // Entferne den aktuellen Zustand (nach dem letzten Zug)
                 mementoHistory.Pop();
+
                 // Stelle den Zustand vor dem letzten Zug wieder her
                 Memento previousMemento = mementoHistory.Peek();
                 gameBoard.SetBoard(previousMemento.GetSavedState());
+
+                // Entferne den letzten Zug aus gameHistory
+                if (gameHistory.Count > 0)
+                {
+                    gameHistory.RemoveAt(gameHistory.Count - 1); // Letzten Zug entfernen
+                }
+
                 Console.WriteLine("Der letzte Zug wurde rückgängig gemacht.");
+                RefreshBoard();  // Spielfeld anzeigen
+
+                // Der Spieler darf seinen Zug erneut tätigen
             }
             else
             {
                 Console.WriteLine("Es gibt keinen Zug zum Rückgängigmachen.");
             }
+        }
+
+
+        private void RefreshBoard()
+        {
+            gameView.PrintBoard(gameBoard, gameBoard.GetSize());  // Board wird neu gezeichnet
         }
     }
 }

@@ -4,9 +4,7 @@ namespace tictactoe_gruppe4
 {
     public class HumanPlayer : Player
     {
-        public HumanPlayer(string name, char symbol) : base(name, symbol)
-        {
-        }
+        public HumanPlayer(string name, char symbol) : base(name, symbol) { }
 
         public override (string, (int, int)) MakeMove(GameBoardModel gameBoard)
         {
@@ -14,25 +12,26 @@ namespace tictactoe_gruppe4
             {
                 Console.Write($"{GetName()} ({GetSymbol()}), geben Sie die Zeile (oder 'undo' zum Rückgängig machen) ein: ");
                 string inputRow = Console.ReadLine();
+
                 if (inputRow.ToLower() == "undo")
                 {
-                    GameController.Instance.UndoMove();
-                    // Nach dem Undo wird die Schleife fortgesetzt, sodass der Spieler erneut einen Zug eingeben kann.
-                    continue;
+                    return ("undo", (-1, -1));  // Signalisiert Rückgängig machen
                 }
+
                 if (!int.TryParse(inputRow, out int row))
                 {
                     Console.WriteLine("Ungültige Eingabe. Bitte geben Sie eine Zahl ein.");
                     continue;
                 }
 
-                Console.Write($"{GetName()} ({GetSymbol()}), geben Sie die Spalte (oder 'undo' zum Rückgängig machen) ein: ");
+                Console.Write($"{GetName()} ({GetSymbol()}), geben Sie die Spalte ein: ");
                 string inputCol = Console.ReadLine();
+
                 if (inputCol.ToLower() == "undo")
                 {
-                    GameController.Instance.UndoMove();
-                    continue;
+                    return ("undo", (-1, -1));  // Signalisiert Rückgängig machen
                 }
+
                 if (!int.TryParse(inputCol, out int col))
                 {
                     Console.WriteLine("Ungültige Eingabe. Bitte geben Sie eine Zahl ein.");
@@ -53,4 +52,6 @@ namespace tictactoe_gruppe4
             }
         }
     }
+
 }
+
