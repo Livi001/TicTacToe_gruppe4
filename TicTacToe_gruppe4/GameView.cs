@@ -7,7 +7,7 @@ namespace tictactoe_gruppe4
         public void PrintBoard(GameBoardModel board, int size)
         {
             Console.Clear();
-            Console.WriteLine("Tic-Tac-Toe 2.0");
+            Console.WriteLine("Tic-Tac-Toe Extra");
             Console.Write("     ");
             for (int i = 0; i < size; i++)
             {

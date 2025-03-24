@@ -6,7 +6,7 @@ namespace tictactoe_gruppe4
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Willkommen zu Tic-Tac-Toe 2.0!");
+            Console.WriteLine("Willkommen zu Tic-Tac-Toe Extra!");
             GameController gameController = new GameController();
         }
     }
