@@ -50,9 +50,9 @@ namespace tictactoe_gruppe4
 
         private int ChooseBoardSize()
         {
-            Console.WriteLine("Wählen Sie die Spielfeldgröße:");
+            Console.WriteLine("Wählen Sie die Spielfeldgrösse:");
             Console.WriteLine("1. Classic (3x3)");
-            Console.WriteLine("2. Groß (5x5)");
+            Console.WriteLine("2. Gross (5x5)");
             Console.WriteLine("3. Riesig (7x7)");
 
             int sizeChoice = 0;
