@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TicTacToe_gruppe4; // Dein Namespace, in dem die GameBoardModel-Klasse definiert ist.
-using System;
+using TicTacToe_gruppe4; 
 using tictactoe_gruppe4;
 
 namespace TicTacToe_gruppe4.Tests
