@@ -1,6 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Reflection;
+﻿using System.Reflection;
 using tictactoe_gruppe4;
 
 [TestClass]
