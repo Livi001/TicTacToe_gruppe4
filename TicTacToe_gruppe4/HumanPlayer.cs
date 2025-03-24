@@ -5,6 +5,11 @@ namespace tictactoe_gruppe4
     public class HumanPlayer : Player
     {
         public HumanPlayer(string name, char symbol) : base(name, symbol) { }
+        /// <summary>
+        /// Führt einen Zug aus und gibt eine Beschreibung und die Position des Zuges zurück.
+        /// </summary>
+        /// <param name="gameBoard">Das aktuelle Spielfeldmodell.</param>
+        /// <returns>Ein Tupel aus Beschreibung und Position des Zuges.</returns>
 
         public override (string, (int, int)) MakeMove(GameBoardModel gameBoard)
         {

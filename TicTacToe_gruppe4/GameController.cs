@@ -43,6 +43,10 @@ namespace tictactoe_gruppe4
         }
 
 
+        /// <summary>
+        /// Gibt die Instanz des <see cref="GameController"/> zurück.
+        /// </summary>
+
         public static GameController Instance
         {
             get
@@ -52,6 +56,10 @@ namespace tictactoe_gruppe4
                 return instance;
             }
         }
+        /// <summary>
+        /// Wählt die Größe des Spielfelds.
+        /// </summary>
+        /// <returns>Die gewählte Größe des Spielfelds.</returns>
 
         private int ChooseBoardSize()
         {
@@ -91,6 +99,9 @@ namespace tictactoe_gruppe4
 
             return players;
         }
+        /// <summary>
+        /// Startet das Spiel.
+        /// </summary>
 
         public void StartGame()
         {

@@ -9,6 +9,11 @@ namespace tictactoe_gruppe4
         public ComputerPlayer(string name, char symbol) : base(name, symbol)
         {
         }
+        /// <summary>
+        /// Führt einen Zug für den ComputerSpieler aus.
+        /// </summary>
+        /// <param name="gameBoard">Das aktuelle Spielfeldmodell.</param>
+        /// <returns>Eine Beschreibung des Zuges und die Position (Zeile, Spalte).</returns>
 
         public override (string, (int, int)) MakeMove(GameBoardModel gameBoard)
         {

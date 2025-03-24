@@ -14,30 +14,60 @@ namespace tictactoe_gruppe4
                     board[i, j] = ' ';
         }
 
+        /// <summary>
+        /// Setzt ein Symbol auf dem Spielfeld.
+        /// </summary>
+        /// <param name="row">Die Zeile des Spielfelds.</param>
+        /// <param name="col">Die Spalte des Spielfelds.</param>
+        /// <param name="symbol">Das zu setzende Symbol.</param>
+
         public void SetCell(int row, int col, char symbol)
         {
             board[row, col] = symbol;
         }
+        /// <summary>
+        /// Gibt das Symbol an der angegebenen Position zurück.
+        /// </summary>
+        /// <param name="row">Die Zeile des Spielfelds.</param>
+        /// <param name="col">Die Spalte des Spielfelds.</param>
+        /// <returns>Das Symbol an der angegebenen Position.</returns>
 
         public char GetCell(int row, int col)
         {
             return board[row, col];
         }
+        /// <summary>
+        /// Gibt die Größe des Spielfelds zurück.
+        /// </summary>
+        /// <returns>Die Größe des Spielfelds.</returns>
 
         public int GetSize()
         {
             return board.GetLength(0);
         }
+        /// <summary>
+        /// Gibt eine Kopie des aktuellen Spielfelds zurück.
+        /// </summary>
+        /// <returns>Eine Kopie des aktuellen Spielfelds.</returns>
 
         public char[,] GetBoardCopy()
         {
             return (char[,])board.Clone();
         }
+        /// <summary>
+        /// Setzt das Spielfeld auf einen neuen Zustand.
+        /// </summary>
+        /// <param name="newBoard">Der neue Zustand des Spielfelds.</param>
 
         public void SetBoard(char[,] newBoard)
         {
             board = newBoard;
         }
+        /// <summary>
+        /// Überprüft, ob ein Spieler mit dem angegebenen Symbol gewonnen hat.
+        /// </summary>
+        /// <param name="symbol">Das Symbol des Spielers.</param>
+        /// <returns>True, wenn der Spieler gewonnen hat, andernfalls false.</returns>
 
         public bool CheckWin(char symbol)
         {
@@ -98,6 +128,10 @@ namespace tictactoe_gruppe4
             }
             return true;
         }
+        /// <summary>
+        /// Überprüft, ob das Spielfeld vollständig gefüllt ist.
+        /// </summary>
+        /// <returns>True, wenn das Spielfeld vollständig gefüllt ist, andernfalls false.</returns>
 
         public bool IsFull()
         {

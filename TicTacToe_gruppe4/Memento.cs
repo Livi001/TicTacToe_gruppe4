@@ -8,6 +8,10 @@
         {
             boardState = (char[,])state.Clone();
         }
+        /// <summary>
+        /// Gibt den gespeicherten Zustand des Spielfelds zurück.
+        /// </summary>
+        /// <returns>Der gespeicherte Zustand des Spielfelds.</returns>
 
         public char[,] GetSavedState()
         {

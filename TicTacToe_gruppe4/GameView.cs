@@ -4,6 +4,12 @@ namespace tictactoe_gruppe4
 {
     public class GameView
     {
+        /// <summary>
+        /// Zeigt das Spielfeld im Konsolenfenster an.
+        /// </summary>
+        /// <param name="board">Das aktuelle Spielfeldmodell.</param>
+        /// <param name="size">Die Größe des Spielfelds.</param>
+
         public void PrintBoard(GameBoardModel board, int size)
         {
             Console.Clear();
@@ -36,6 +42,10 @@ namespace tictactoe_gruppe4
                 }
             }
         }
+        /// <summary>
+        /// Zeigt eine Nachricht im Konsolenfenster an.
+        /// </summary>
+        /// <param name="message">Die anzuzeigende Nachricht.</param>
 
         public void PrintMessage(string message)
         {
