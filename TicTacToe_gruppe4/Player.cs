@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TicTacToe_gruppe4;
-
-namespace tictactoe_test
+﻿namespace tictactoe_gruppe4
 {
     public abstract class Player
     {
@@ -18,22 +11,10 @@ namespace tictactoe_test
             this.symbol = symbol;
         }
 
-        // ✅ Methode MakeMove gibt jetzt (int, int) zurück
-        public abstract (int, int) MakeMove(GameBoardModel gameBoard);
+        // Muss ein Tupel (Beschreibung, (Zeile, Spalte)) zurückgeben
+        public abstract (string, (int, int)) MakeMove(GameBoardModel gameBoard);
 
-        // ✅ Getter-Methoden hinzufügen
-        public string GetName()
-        {
-            return name;
-        }
-
-        public char GetSymbol()
-        {
-            return symbol;
-        }
+        public string GetName() => name;
+        public char GetSymbol() => symbol;
     }
-
-
-
-
 }

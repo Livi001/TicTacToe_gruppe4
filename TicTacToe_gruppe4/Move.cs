@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TicTacToe_gruppe4
+namespace tictactoe_gruppe4
 {
     public class Move
     {
@@ -17,4 +17,5 @@ namespace TicTacToe_gruppe4
             Col = col;
         }
     }
+
 }

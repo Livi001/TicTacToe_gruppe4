@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace tictactoe_test
+namespace tictactoe_gruppe4
 {
     public class GameState
     {
@@ -26,5 +22,4 @@ namespace tictactoe_test
             return null;
         }
     }
-
 }

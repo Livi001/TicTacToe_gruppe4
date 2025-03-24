@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TicTacToe_gruppe4;
 
-namespace tictactoe_test
+namespace tictactoe_gruppe4
 {
     internal class GameController
     {
@@ -13,11 +9,12 @@ namespace tictactoe_test
         private GameView gameView;
         private Player currentPlayer;
         private List<Player> players;
+        private static GameController instance;
         private GameLogger gameLogger;
         private Timer gameTimer;
         private GameState gameState;
-
-        private List<string> gameHistory = new List<string>(); // Liste für Spielverlauf
+        private List<string> gameHistory = new List<string>(); // Spielverlauf
+        private Stack<Memento> mementoHistory = new Stack<Memento>(); // Für Rückgängig-Machen
 
         public enum BoardSize
         {
@@ -39,6 +36,16 @@ namespace tictactoe_test
             currentPlayer = players[0];
 
             StartGame();
+        }
+
+        public static GameController Instance
+        {
+            get
+            {
+                if (instance == null)
+                    instance = new GameController();
+                return instance;
+            }
         }
 
         private int ChooseBoardSize()
@@ -83,16 +90,18 @@ namespace tictactoe_test
         public void StartGame()
         {
             gameTimer.Start();
+
             while (true)
             {
                 gameView.PrintBoard(gameBoard, gameBoard.GetSize());
 
-                (int row, int col) = currentPlayer.MakeMove(gameBoard);
-                string moveDescription = $"{currentPlayer.GetName()} ({currentPlayer.GetSymbol()}) setzt auf [{row}, {col}]";
-                LogMove(moveDescription);
+                // Erwartet wird, dass MakeMove ein Tupel (string, (int, int)) zurückgibt.
+                var moveResult = currentPlayer.MakeMove(gameBoard);
+                LogMove(moveResult.Item1, moveResult.Item2); // Zug protokollieren
 
-
+                // Speichere den aktuellen Zustand für Undo
                 gameState.SaveMemento(new Memento(gameBoard.GetBoardCopy()));
+                mementoHistory.Push(new Memento(gameBoard.GetBoardCopy()));
 
                 if (gameBoard.CheckWin(currentPlayer.GetSymbol()))
                 {
@@ -113,11 +122,13 @@ namespace tictactoe_test
                 SwitchPlayer();
             }
 
-            // Am Ende des Spiels wird entschieden, ob das Spiel neu startet oder nicht
             EndGame();
         }
 
-        private void SwitchPlayer() => currentPlayer = (currentPlayer == players[0]) ? players[1] : players[0];
+        private void SwitchPlayer()
+        {
+            currentPlayer = (currentPlayer == players[0]) ? players[1] : players[0];
+        }
 
         private void EndGame()
         {
@@ -126,17 +137,16 @@ namespace tictactoe_test
 
             if (choice.ToLower() == "y")
             {
-                RestartGame(); // Spiel neu starten
+                RestartGame();
             }
             else if (choice.ToLower() == "n")
             {
-                // Falls der Benutzer nicht neu starten möchte, fragen wir, ob er den Spielverlauf ansehen möchte
                 Console.WriteLine("Möchten Sie den Spielverlauf ansehen? (y/n): ");
                 string viewHistoryChoice = Console.ReadLine();
 
                 if (viewHistoryChoice.ToLower() == "y")
                 {
-                    ShowGameHistory(); // Spielverlauf anzeigen
+                    ShowGameHistory();
                 }
                 else
                 {
@@ -150,23 +160,44 @@ namespace tictactoe_test
             Console.WriteLine("Das Spiel wird neu gestartet...");
             int boardSize = ChooseBoardSize();
             gameBoard = new GameBoardModel(boardSize);
-            currentPlayer = players[0]; // Setze den ersten Spieler zurück
-            StartGame(); // Starte das Spiel neu
+            currentPlayer = players[0];
+            StartGame();
         }
 
-        // Methode zum Protokollieren eines Zuges
-        private void LogMove(string moveDescription)
+        // Protokolliert den Zug: Erwartet eine Beschreibung (string) und die Position als Tupel (int, int)
+        private void LogMove(string moveDescription, (int, int) movePosition)
         {
-            gameHistory.Add(moveDescription); // Zug zum Verlauf hinzufügen
+            string detailedMove = $"{moveDescription} auf [{movePosition.Item1}, {movePosition.Item2}]";
+            gameHistory.Add(detailedMove);
+            Console.WriteLine(detailedMove);
         }
 
-        // Methode zum Anzeigen des Spielverlaufs
         public void ShowGameHistory()
         {
             Console.WriteLine("Spielverlauf:");
-            foreach (var move in gameHistory)
+            foreach (string move in gameHistory)
             {
-                Console.WriteLine(move); // Gibt jeden Zug im Verlauf aus
+                Console.WriteLine(move);
+            }
+        }
+
+        // Eine einzige öffentliche Methode zum Rückgängigmachen
+        public void UndoMove()
+        {
+            // Es müssen mindestens zwei Zustände vorhanden sein:
+            // den Zustand vor dem letzten Zug und den aktuellen Zustand.
+            if (mementoHistory.Count > 1)
+            {
+                // Entferne den aktuellen Zustand (nach dem letzten Zug)
+                mementoHistory.Pop();
+                // Stelle den Zustand vor dem letzten Zug wieder her
+                Memento previousMemento = mementoHistory.Peek();
+                gameBoard.SetBoard(previousMemento.GetSavedState());
+                Console.WriteLine("Der letzte Zug wurde rückgängig gemacht.");
+            }
+            else
+            {
+                Console.WriteLine("Es gibt keinen Zug zum Rückgängigmachen.");
             }
         }
     }

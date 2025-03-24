@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TicTacToe_gruppe4;
+using System.IO;
 
-namespace tictactoe_test
+
+namespace tictactoe_gruppe4
 {
     public class GameLogger
     {
@@ -18,24 +15,21 @@ namespace tictactoe_test
             File.AppendAllText(logFile, logEntry + Environment.NewLine);
         }
 
-
-
         public void SaveGame()
         {
             Console.WriteLine("Spiel gespeichert.");
-            // Hier könnte man zusätzliche Logik hinzufügen, um das gesamte Spiel zu speichern.
+            // Zusätzliche Logik zum Speichern des Spiels
         }
 
         public void LoadGame()
         {
             Console.WriteLine("Spiel geladen.");
-            // Hier könnte man zusätzliche Logik hinzufügen, um ein gespeichertes Spiel zu laden.
+            // Zusätzliche Logik zum Laden eines Spiels
         }
 
         public void ClearLog()
         {
-            File.WriteAllText(logFile, string.Empty); // Löscht die Datei, falls man das Spiel zurücksetzen will.
+            File.WriteAllText(logFile, string.Empty);
         }
     }
-
 }

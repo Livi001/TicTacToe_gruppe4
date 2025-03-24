@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace tictactoe_test
+namespace tictactoe_gruppe4
 {
     public class GameBoardModel
     {
@@ -23,40 +19,42 @@ namespace tictactoe_test
             board[row, col] = symbol;
         }
 
-        public char GetCell(int row, int col) => board[row, col];
+        public char GetCell(int row, int col)
+        {
+            return board[row, col];
+        }
 
-        public int GetSize() => board.GetLength(0);
+        public int GetSize()
+        {
+            return board.GetLength(0);
+        }
 
-        // Methode zum Setzen des gesamten Boards
+        public char[,] GetBoardCopy()
+        {
+            return (char[,])board.Clone();
+        }
+
         public void SetBoard(char[,] newBoard)
         {
-            board = newBoard; // Das gesamte Spielfeld wird ersetzt
+            board = newBoard;
         }
 
         public bool CheckWin(char symbol)
         {
             int size = GetSize();
 
-            // Horizontale und vertikale Zeilen
+            // Zeilen und Spalten prüfen
             for (int i = 0; i < size; i++)
             {
                 if (CheckRow(i, symbol) || CheckColumn(i, symbol))
                     return true;
             }
 
-            // Diagonalen
+            // Diagonalen prüfen
             if (CheckDiagonal(symbol) || CheckAntiDiagonal(symbol))
                 return true;
 
             return false;
-        }
-
-        public bool IsFull()
-        {
-            foreach (var cell in board)
-                if (cell == ' ') return false;
-
-            return true;
         }
 
         private bool CheckRow(int row, char symbol)
@@ -81,7 +79,8 @@ namespace tictactoe_test
 
         private bool CheckDiagonal(char symbol)
         {
-            for (int i = 0; i < GetSize(); i++)
+            int size = GetSize();
+            for (int i = 0; i < size; i++)
             {
                 if (board[i, i] != symbol)
                     return false;
@@ -91,18 +90,23 @@ namespace tictactoe_test
 
         private bool CheckAntiDiagonal(char symbol)
         {
-            for (int i = 0; i < GetSize(); i++)
+            int size = GetSize();
+            for (int i = 0; i < size; i++)
             {
-                if (board[i, GetSize() - i - 1] != symbol)
+                if (board[i, size - i - 1] != symbol)
                     return false;
             }
             return true;
         }
 
-        public char[,] GetBoardCopy()
+        public bool IsFull()
         {
-            return (char[,])board.Clone();
+            foreach (var cell in board)
+            {
+                if (cell == ' ')
+                    return false;
+            }
+            return true;
         }
     }
-
 }

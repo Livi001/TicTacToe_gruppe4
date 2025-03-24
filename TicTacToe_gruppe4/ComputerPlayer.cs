@@ -1,34 +1,37 @@
 ﻿using System;
+using tictactoe_gruppe4;
 
-namespace tictactoe_test
+namespace tictactoe_gruppe4
 {
     public class ComputerPlayer : Player
     {
         private static Random rnd = new Random();
 
-        public ComputerPlayer(string name, char symbol) : base(name, symbol) { }
-
-        public override (int, int) MakeMove(GameBoardModel gameBoard)
+        public ComputerPlayer(string name, char symbol) : base(name, symbol)
         {
-            int row, col;
+        }
 
-            // 1️⃣ Versuche zu gewinnen
+        public override (string, (int, int)) MakeMove(GameBoardModel gameBoard)
+        {
+            int row = -1, col = -1;
+
+            // 1. Versuch zu gewinnen
             if (TryToWin(gameBoard, GetSymbol(), out row, out col))
             {
                 gameBoard.SetCell(row, col, GetSymbol());
                 Console.WriteLine($"🤖 {GetName()} ({GetSymbol()}) setzt auf [{row}, {col}] (Gewinnzug)");
-                return (row, col);
+                return ($"{GetName()} setzt", (row, col));
             }
 
-            // 2️⃣ Blockiere, wenn Gegner gewinnen kann
+            // 2. Blockiere, falls der Gegner gewinnen könnte
             if (TryToBlock(gameBoard, out row, out col))
             {
                 gameBoard.SetCell(row, col, GetSymbol());
                 Console.WriteLine($"🤖 {GetName()} ({GetSymbol()}) setzt auf [{row}, {col}] (Blockzug)");
-                return (row, col);
+                return ($"{GetName()} setzt", (row, col));
             }
 
-            // 3️⃣ Zufälliger Zug
+            // 3. Zufälliger Zug
             do
             {
                 row = rnd.Next(0, gameBoard.GetSize());
@@ -37,56 +40,60 @@ namespace tictactoe_test
 
             gameBoard.SetCell(row, col, GetSymbol());
             Console.WriteLine($"🤖 {GetName()} ({GetSymbol()}) setzt auf [{row}, {col}] (Zufallszug)");
-            return (row, col); // ✅ Richtige Rückgabe!
+            return ($"{GetName()} setzt", (row, col));
         }
 
         private bool TryToWin(GameBoardModel gameBoard, char symbol, out int row, out int col)
         {
-            for (int r = 0; r < gameBoard.GetSize(); r++)
+            int size = gameBoard.GetSize();
+            for (int r = 0; r < size; r++)
             {
-                for (int c = 0; c < gameBoard.GetSize(); c++)
+                for (int c = 0; c < size; c++)
                 {
                     if (gameBoard.GetCell(r, c) == ' ')
                     {
                         gameBoard.SetCell(r, c, symbol);
                         if (gameBoard.CheckWin(symbol))
                         {
-                            gameBoard.SetCell(r, c, ' '); // Rückgängig machen
+                            gameBoard.SetCell(r, c, ' ');
                             row = r;
                             col = c;
                             return true;
                         }
-                        gameBoard.SetCell(r, c, ' '); // Rückgängig machen
+                        gameBoard.SetCell(r, c, ' ');
                     }
                 }
             }
-            row = col = -1;
+            row = -1;
+            col = -1;
             return false;
         }
 
         private bool TryToBlock(GameBoardModel gameBoard, out int row, out int col)
         {
             char opponentSymbol = GetSymbol() == 'X' ? 'O' : 'X';
+            int size = gameBoard.GetSize();
 
-            for (int r = 0; r < gameBoard.GetSize(); r++)
+            for (int r = 0; r < size; r++)
             {
-                for (int c = 0; c < gameBoard.GetSize(); c++)
+                for (int c = 0; c < size; c++)
                 {
                     if (gameBoard.GetCell(r, c) == ' ')
                     {
                         gameBoard.SetCell(r, c, opponentSymbol);
                         if (gameBoard.CheckWin(opponentSymbol))
                         {
-                            gameBoard.SetCell(r, c, ' '); // Rückgängig machen
+                            gameBoard.SetCell(r, c, ' ');
                             row = r;
                             col = c;
                             return true;
                         }
-                        gameBoard.SetCell(r, c, ' '); // Rückgängig machen
+                        gameBoard.SetCell(r, c, ' ');
                     }
                 }
             }
-            row = col = -1;
+            row = -1;
+            col = -1;
             return false;
         }
     }

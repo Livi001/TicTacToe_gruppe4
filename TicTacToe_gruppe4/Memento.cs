@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace tictactoe_test
+﻿namespace tictactoe_gruppe4
 {
     public class Memento
     {
@@ -12,13 +6,12 @@ namespace tictactoe_test
 
         public Memento(char[,] state)
         {
-            boardState = (char[,])state.Clone(); // Kopie des Spielbretts speichern
+            boardState = (char[,])state.Clone();
         }
 
         public char[,] GetSavedState()
         {
-            return (char[,])boardState.Clone(); // Kopie zurückgeben
+            return (char[,])boardState.Clone();
         }
     }
-
 }

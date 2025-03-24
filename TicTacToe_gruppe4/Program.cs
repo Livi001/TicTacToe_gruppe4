@@ -1,16 +1,13 @@
-﻿using TicTacToe_gruppe4;
+﻿using System;
 
-namespace tictactoe_test
-{
+namespace tictactoe_gruppe4
     internal class Program
     {
-        static void Main()
+        static void Main(string[] args)
         {
-            GameController game = new GameController();
+            // Hier wird der GameController als Singleton initialisiert
+            GameController game = GameController.Instance;
             Console.ReadLine();
         }
     }
-
-
-
 }

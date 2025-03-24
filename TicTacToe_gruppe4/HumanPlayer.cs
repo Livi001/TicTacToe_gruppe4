@@ -1,45 +1,56 @@
 ﻿using System;
-using TicTacToe_gruppe4;
 
-namespace tictactoe_test
+namespace tictactoe_gruppe4
 {
     public class HumanPlayer : Player
     {
-        public HumanPlayer(string name, char symbol) : base(name, symbol) { }
-
-        public override (int, int) MakeMove(GameBoardModel gameBoard)
+        public HumanPlayer(string name, char symbol) : base(name, symbol)
         {
-            int row, col;
-            bool validMove = false;
+        }
 
-            while (!validMove)
+        public override (string, (int, int)) MakeMove(GameBoardModel gameBoard)
+        {
+            while (true)
             {
-                Console.Write($"{GetName()} ({GetSymbol()}), geben Sie Ihre Zeile (0-{gameBoard.GetSize() - 1}) ein: ");
-                if (!int.TryParse(Console.ReadLine(), out row))
+                Console.Write($"{GetName()} ({GetSymbol()}), geben Sie die Zeile (oder 'undo' zum Rückgängig machen) ein: ");
+                string inputRow = Console.ReadLine();
+                if (inputRow.ToLower() == "undo")
                 {
-                    Console.WriteLine("❌ Ungültige Eingabe! Bitte eine Zahl eingeben.");
+                    GameController.Instance.UndoMove();
+                    // Nach dem Undo wird die Schleife fortgesetzt, sodass der Spieler erneut einen Zug eingeben kann.
+                    continue;
+                }
+                if (!int.TryParse(inputRow, out int row))
+                {
+                    Console.WriteLine("Ungültige Eingabe. Bitte geben Sie eine Zahl ein.");
                     continue;
                 }
 
-                Console.Write($"{GetName()} ({GetSymbol()}), geben Sie Ihre Spalte (0-{gameBoard.GetSize() - 1}) ein: ");
-                if (!int.TryParse(Console.ReadLine(), out col))
+                Console.Write($"{GetName()} ({GetSymbol()}), geben Sie die Spalte (oder 'undo' zum Rückgängig machen) ein: ");
+                string inputCol = Console.ReadLine();
+                if (inputCol.ToLower() == "undo")
                 {
-                    Console.WriteLine("❌ Ungültige Eingabe! Bitte eine Zahl eingeben.");
+                    GameController.Instance.UndoMove();
+                    continue;
+                }
+                if (!int.TryParse(inputCol, out int col))
+                {
+                    Console.WriteLine("Ungültige Eingabe. Bitte geben Sie eine Zahl ein.");
                     continue;
                 }
 
-                if (row >= 0 && row < gameBoard.GetSize() && col >= 0 && col < gameBoard.GetSize() && gameBoard.GetCell(row, col) == ' ')
+                if (row >= 0 && row < gameBoard.GetSize() &&
+                    col >= 0 && col < gameBoard.GetSize() &&
+                    gameBoard.GetCell(row, col) == ' ')
                 {
                     gameBoard.SetCell(row, col, GetSymbol());
-                    validMove = true;
+                    return ($"{GetName()} setzt", (row, col));
                 }
                 else
                 {
-                    Console.WriteLine("❌ Ungültiger Zug! Bitte erneut eingeben.");
+                    Console.WriteLine("Ungültiger Zug, bitte erneut versuchen.");
                 }
             }
-
-            return (row, col); // ✅ Richtige Rückgabe!
         }
     }
 }
